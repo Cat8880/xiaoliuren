@@ -1,0 +1,995 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>小六壬 · 掐指一算</title>
+<meta name="description" content="小六壬掌诀占卜：大安、留连、速喜、赤口、小吉、空亡。附推演过程与详细解释。">
+<meta name="theme-color" content="#F6F2E9">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%23A8352B'/%3E%3Ctext x='16' y='24' font-size='21' text-anchor='middle' fill='%23FFF8EE' font-family='serif'%3E卜%3C/text%3E%3C/svg%3E">
+<meta name="format-detection" content="telephone=no">
+<meta property="og:title" content="小六壬 · 掐指一算">
+<meta property="og:description" content="心诚则灵，掐指知吉凶。六神掌诀占卜，附详细解释。">
+<meta property="og:type" content="website">
+<style>
+/* ── 设计简报 ─────────────────────────────────────────────
+   参考：Notion 的暖纸底 + 衬线标题 + 柔和分层（取其比例与留白，非复刻）
+   画布 #F6F2E9（米纸） / 面 #FFFDF7 / 分隔线 #DFD5C1 / 墨 #1F1A13
+   唯一强调色：朱砂 #A8352B —— 只用于主操作、印章、吉兆数字
+   字号 4 级：display 40 / h2 20 / body 15 / caption 12
+   间距 8 基数：8·16·24·32·48 ；圆角统一 4 与 8 ；无投影堆叠
+   动效 200–260ms ease-out，尊重 prefers-reduced-motion
+   ──────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
+:root{
+  --canvas:#F6F2E9; --surface:#FFFDF7; --surface-2:#EFE8D9;
+  --hairline:#DFD5C1; --hairline-2:#CBBFA6;
+  --ink:#1F1A13; --ink-2:#453C2C; --muted:#6B604D;
+  --accent:#A8352B; --accent-press:#872A22; --on-accent:#FFF8EE;
+  --gold:#8D6E3C;
+  --r-s:4px; --r-m:8px;
+  --font-serif:"Songti SC","Noto Serif CJK SC","Source Han Serif SC",STSong,SimSun,Georgia,serif;
+  --font-sans:-apple-system,BlinkMacSystemFont,"PingFang SC","HarmonyOS Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.7,.3,1);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --canvas:#14110C; --surface:#1C1811; --surface-2:#241F16;
+    --hairline:#332C20; --hairline-2:#4A4030;
+    --ink:#F3ECDC; --ink-2:#D6CBB4; --muted:#A6987E;
+    --accent:#D2604A; --accent-press:#E07660; --on-accent:#1A130E;
+    --gold:#B98F55;
+  }
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--canvas); color:var(--ink);
+  font-family:var(--font-sans); font-size:15px; line-height:1.75;
+  -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+/* 纸纹：极淡的横向纤维，不用图片 */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.55;
+  background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(140,120,90,.045) 3px 4px);
+}
+@media (prefers-color-scheme: dark){ body::before{opacity:.35} }
+h1,h2,h3,p,ul,ol,dl,dd,blockquote{margin:0}
+button{font:inherit;color:inherit}
+a{color:var(--accent)}
+
+.wrap{position:relative; z-index:1; max-width:560px; margin:0 auto;
+  padding:0 20px calc(48px + env(safe-area-inset-bottom));}
+
+/* ── 通用字级 ── */
+.eyebrow{font-size:12px; line-height:1.5; letter-spacing:.34em; color:var(--muted);
+  text-transform:uppercase; font-weight:500}
+.caption{font-size:12px; line-height:1.6; color:var(--muted)}
+h1{font-family:var(--font-serif); font-weight:600; letter-spacing:.06em}
+h2{font-family:var(--font-serif); font-size:20px; font-weight:600; letter-spacing:.04em}
+
+/* ── 页头 ── */
+.hero{padding:44px 0 24px; text-align:center}
+.hero .eyebrow{margin-bottom:14px}
+.hero h1{font-size:clamp(38px,11.5vw,46px); line-height:1.15; letter-spacing:.2em;
+  margin-left:.2em; /* 抵消末字字距 */ }
+.hero .lede{margin-top:12px; color:var(--muted); font-size:14px; letter-spacing:.08em}
+.rule{height:1px; background:linear-gradient(90deg,transparent,var(--hairline-2),transparent);
+  margin:22px 0}
+
+/* ── 今日卡 ── */
+.nowcard{display:flex; align-items:center; justify-content:space-between; gap:12px;
+  background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-m);
+  padding:14px 16px}
+.nowcard .cal{font-size:13px; color:var(--muted); letter-spacing:.02em}
+.nowcard .lun{font-family:var(--font-serif); font-size:17px; color:var(--ink); letter-spacing:.04em}
+.nowcard .gz{font-size:12px; color:var(--muted); text-align:right; line-height:1.5; white-space:nowrap}
+.nowcard .gz b{display:block; font-family:var(--font-serif); font-size:15px; font-weight:600; color:var(--ink-2)}
+
+/* ── 分段控件 ── */
+.seg{display:flex; gap:4px; margin:24px 0 0; padding:4px;
+  background:var(--surface-2); border-radius:var(--r-m); border:1px solid var(--hairline)}
+.seg button{flex:1; min-height:40px; border:0; background:transparent; color:var(--muted);
+  border-radius:var(--r-s); cursor:pointer; font-size:14px; letter-spacing:.04em;
+  transition:background .2s var(--ease), color .2s var(--ease)}
+.seg button[aria-selected="true"]{background:var(--surface); color:var(--ink); font-weight:600;
+  box-shadow:0 1px 0 rgba(0,0,0,.04)}
+
+/* ── 面板 ── */
+.panel{padding:20px 2px 0}
+.panel .hint{font-size:13px; color:var(--muted); line-height:1.7}
+.panel .hint strong{color:var(--ink-2); font-weight:600}
+
+.facts{display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 0}
+.fact{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-s);
+  padding:8px 12px; display:flex; align-items:baseline; gap:8px}
+.fact .k{font-size:12px; color:var(--muted)}
+.fact .v{font-family:var(--font-serif); font-size:16px; letter-spacing:.02em}
+.fact .v em{font-style:normal; font-size:12px; color:var(--muted); margin-left:4px}
+
+.linkish{background:none; border:0; padding:8px 0; color:var(--accent); font-size:13px;
+  cursor:pointer; letter-spacing:.02em; min-height:44px}
+.linkish:active{opacity:.6}
+
+.manual{display:none; gap:8px; margin-top:4px; padding:14px; border:1px dashed var(--hairline-2);
+  border-radius:var(--r-m); flex-wrap:wrap}
+.manual.open{display:flex}
+.field{flex:1 1 30%; min-width:92px}
+.field label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+.field select,.field input{width:100%; min-height:42px; padding:8px 10px; font-size:15px;
+  font-family:var(--font-serif); color:var(--ink); background:var(--surface);
+  border:1px solid var(--hairline-2); border-radius:var(--r-s); appearance:none;
+  -webkit-appearance:none; text-align:center}
+.field select:focus,.field input:focus{outline:2px solid var(--accent); outline-offset:1px; border-color:var(--accent)}
+.nums{display:flex; gap:10px; margin-top:16px}
+.nums .field{flex:1}
+
+/* ── 主按钮 ── */
+.btn{display:block; width:100%; min-height:54px; border:0; border-radius:var(--r-m);
+  background:var(--accent); color:var(--on-accent); font-family:var(--font-serif);
+  font-size:19px; letter-spacing:.3em; text-indent:.3em; cursor:pointer;
+  transition:background .18s var(--ease), transform .18s var(--ease)}
+.btn:active{background:var(--accent-press); transform:scale(.995)}
+.btn[disabled]{opacity:.55}
+.btn.ghost{background:transparent; color:var(--ink-2); border:1px solid var(--hairline-2);
+  font-size:15px; letter-spacing:.12em; text-indent:.12em; min-height:48px}
+.btn.ghost:active{background:var(--surface-2)}
+.btnrow{display:flex; gap:10px}
+.btnrow .btn{flex:1}
+.castwrap{margin:24px 0 0}
+
+/* ── 掌诀 ── */
+.palm{margin-top:40px}
+.palm-head{display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin-bottom:14px}
+.palm-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:8px}
+.palm-col{display:contents}
+.palm-cell{position:relative; display:flex; flex-direction:column; align-items:center;
+  justify-content:center; gap:2px; min-height:82px; padding:10px 4px;
+  background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-m);
+  cursor:pointer; transition:border-color .2s var(--ease), background .2s var(--ease)}
+.palm-cell:active{background:var(--surface-2); border-color:var(--accent)}
+.palm-cell .nm{font-family:var(--font-serif); font-size:19px; letter-spacing:.1em}
+.palm-cell .el{font-size:12px; color:var(--muted)}
+.palm-cell .tick{position:absolute; top:6px; right:7px; width:5px; height:5px; border-radius:50%;
+  background:var(--hairline-2)}
+.palm-cell[data-luck="good"] .tick{background:var(--accent)}
+.palm-cell[data-luck="bad"] .tick{background:var(--ink-2)}
+.palm-cell.on{border-color:var(--accent); background:var(--surface-2)}
+.palm-foot{display:flex; justify-content:space-between; margin-top:8px; font-size:12px; color:var(--muted);
+  letter-spacing:.1em}
+
+/* ── 记录 ── */
+.records{margin-top:40px}
+.records h2{margin-bottom:12px}
+.rec{display:flex; align-items:center; gap:12px; width:100%; text-align:left;
+  background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-s);
+  padding:12px 14px; margin-bottom:8px; cursor:pointer; min-height:56px}
+.rec:active{background:var(--surface-2)}
+.rec .nm{font-family:var(--font-serif); font-size:17px; letter-spacing:.06em}
+.rec .meta{flex:1; font-size:12px; color:var(--muted)}
+.empty{font-size:13px; color:var(--muted); padding:16px 0; border-top:1px dashed var(--hairline)}
+.foot{margin-top:44px; padding-top:20px; border-top:1px solid var(--hairline);
+  font-size:12px; line-height:1.9; color:var(--muted); text-align:center}
+
+/* ── 视图切换 ── */
+.view{display:none}
+.view.active{display:block; animation:rise .26s var(--ease) both}
+@keyframes rise{from{opacity:0; transform:translateY(8px)} to{opacity:1; transform:none}}
+
+/* ── 结果 ── */
+.res-top{padding:32px 0 8px; text-align:center}
+.plaque{display:inline-block; padding:6px; border:3px solid var(--accent); border-radius:var(--r-s)}
+.plaque>div{padding:10px 20px; border:1px solid var(--accent); border-radius:2px}
+.plaque .nm{font-family:var(--font-serif); font-size:38px; line-height:1.2; letter-spacing:.24em;
+  text-indent:.24em; color:var(--accent)}
+.res-top .luck{margin-top:16px; font-size:13px; letter-spacing:.2em; color:var(--muted)}
+.res-top .luck b{font-family:var(--font-serif); font-size:15px; letter-spacing:.14em; margin-right:8px}
+.luck-good b{color:var(--accent)}
+.luck-bad b{color:var(--ink)}
+.res-top h1.nm2{font-size:0; height:0; overflow:hidden}
+.attrs{display:flex; flex-wrap:wrap; justify-content:center; gap:6px; margin-top:14px}
+.attr{font-size:12px; padding:5px 10px; border:1px solid var(--hairline);
+  border-radius:var(--r-s); color:var(--muted); background:var(--surface)}
+.attr b{color:var(--ink-2); font-weight:600; font-family:var(--font-serif); font-size:13px}
+#qChips{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; justify-content:stretch; margin-top:0}
+#qChips .attr{display:grid; place-items:center; min-height:40px; font-size:13.5px;
+  text-align:center; cursor:pointer; transition:border-color .18s var(--ease), color .18s var(--ease)}
+#qChips .attr:active{background:var(--surface-2)}
+
+.poem{margin:28px 0 0; padding:22px 16px; text-align:center; background:var(--surface);
+  border:1px solid var(--hairline); border-radius:var(--r-m)}
+.poem p{font-family:var(--font-serif); font-size:16.5px; line-height:2.1; letter-spacing:.1em; color:var(--ink-2)}
+.poem p+p{margin-top:2px}
+
+.block{margin-top:28px}
+.block>h2{margin-bottom:10px; display:flex; align-items:center; gap:10px}
+.block>h2::after{content:""; flex:1; height:1px; background:var(--hairline)}
+.block .body{font-size:15px; line-height:1.85; color:var(--ink-2); text-align:justify}
+.qbadge{display:inline-flex; align-items:center; gap:6px; font-size:12px; color:var(--accent);
+  border:1px solid var(--accent); border-radius:var(--r-s); padding:3px 8px; margin-bottom:10px;
+  letter-spacing:.06em}
+
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+.item{background:var(--surface); border:1px solid var(--hairline); border-radius:var(--r-s);
+  padding:10px 12px}
+.item.ask{border-color:var(--accent)}
+.item dt{font-size:12px; color:var(--muted); letter-spacing:.08em; margin-bottom:2px}
+.item.ask dt{color:var(--accent)}
+.item dd{font-size:13.5px; line-height:1.7; color:var(--ink-2); margin:0}
+
+.advice{list-style:none; padding:0; counter-reset:a}
+.advice li{position:relative; padding-left:26px; margin-bottom:8px; font-size:14.5px;
+  line-height:1.75; color:var(--ink-2); counter-increment:a}
+.advice li::before{content:counter(a); position:absolute; left:0; top:2px; width:18px; height:18px;
+  display:grid; place-items:center; font-size:11px; color:var(--on-accent); background:var(--accent);
+  border-radius:2px; font-family:var(--font-serif)}
+
+.dueline{display:flex; align-items:baseline; gap:10px; padding:12px 14px; background:var(--surface-2);
+  border-radius:var(--r-s); font-size:14px}
+.dueline .k{font-size:12px; color:var(--muted); letter-spacing:.1em; flex:none}
+.dueline .v{font-family:var(--font-serif); letter-spacing:.04em}
+
+details.deriv{margin-top:28px; border-top:1px solid var(--hairline); padding-top:14px}
+details.deriv summary{list-style:none; cursor:pointer; font-size:13px; color:var(--muted);
+  letter-spacing:.14em; min-height:44px; display:flex; align-items:center; gap:8px}
+details.deriv summary::-webkit-details-marker{display:none}
+details.deriv summary::before{content:"▸"; font-size:11px; transition:transform .2s var(--ease)}
+details.deriv[open] summary::before{transform:rotate(90deg)}
+.steps{margin-top:6px; border-left:1px solid var(--hairline); padding-left:16px}
+.step{position:relative; padding:8px 0; font-size:13px; color:var(--ink-2); line-height:1.8}
+.step::before{content:""; position:absolute; left:-21px; top:16px; width:7px; height:7px;
+  border-radius:50%; background:var(--hairline-2)}
+.step:last-child::before{background:var(--accent)}
+.step b{font-family:var(--font-serif); color:var(--ink); letter-spacing:.04em}
+.step .num{color:var(--muted)}
+
+/* ── 六宫详解 ── */
+.detail-nav{position:sticky; top:0; z-index:3; display:flex; gap:6px; overflow-x:auto;
+  padding:10px 0; background:linear-gradient(var(--canvas) 70%,transparent);
+  -webkit-overflow-scrolling:touch; scrollbar-width:none}
+.detail-nav::-webkit-scrollbar{display:none}
+.detail-nav button{flex:none; min-height:36px; padding:5px 10px; font-family:var(--font-serif);
+  font-size:13.5px; letter-spacing:.05em; color:var(--ink-2); background:var(--surface);
+  border:1px solid var(--hairline); border-radius:var(--r-s); cursor:pointer}
+.detail-nav button[aria-current="true"]{border-color:var(--accent); color:var(--accent)}
+.dcard{margin-bottom:16px; background:var(--surface); border:1px solid var(--hairline);
+  border-radius:var(--r-m); padding:18px 16px; scroll-margin-top:66px}
+.dcard.hl{border-color:var(--accent)}
+.dcard .head{display:flex; align-items:baseline; gap:10px; margin-bottom:4px}
+.dcard .head .nm{font-family:var(--font-serif); font-size:24px; letter-spacing:.14em}
+.dcard .head .tag{font-size:12px; color:var(--muted); letter-spacing:.06em}
+.dcard .head .lk{margin-left:auto; font-size:12px; letter-spacing:.12em; color:var(--accent)}
+.dcard .head .lk.bad{color:var(--ink)}
+.dcard .poem2{font-family:var(--font-serif); font-size:13.5px; line-height:1.95; color:var(--ink-2);
+  letter-spacing:.06em; padding:10px 0; border-top:1px solid var(--hairline);
+  border-bottom:1px solid var(--hairline); margin:8px 0 12px}
+.dcard .sum{font-size:14px; line-height:1.8; color:var(--ink-2); text-align:justify}
+.dcard .grid2{margin-top:12px}
+.dcard .grid2 .item{background:transparent; border:0; border-top:1px solid var(--hairline);
+  border-radius:0; padding:8px 0}
+.dcard .advice{margin-top:12px}
+.dcard .advice li{font-size:13.5px}
+
+/* ── 起课遮罩 ── */
+.casting{position:fixed; inset:0; z-index:50; display:grid; place-items:center;
+  background:rgba(246,242,233,.94); backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px)}
+@media (prefers-color-scheme: dark){ .casting{background:rgba(20,17,12,.94)} }
+.casting[hidden]{display:none}
+.casting .inner{text-align:center; padding:20px}
+.casting .ring{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; width:210px; margin:0 auto 20px}
+.casting .ring span{display:grid; place-items:center; height:56px; border:1px solid var(--hairline);
+  border-radius:var(--r-s); font-family:var(--font-serif); font-size:15px; letter-spacing:.06em;
+  color:var(--muted); transition:all .12s linear}
+.casting .ring span.on{border-color:var(--accent); color:var(--accent); background:var(--surface)}
+.casting .tip{font-size:13px; letter-spacing:.22em; color:var(--muted)}
+
+/* ── toast ── */
+.toast{position:fixed; left:50%; bottom:calc(28px + env(safe-area-inset-bottom)); transform:translate(-50%,10px);
+  z-index:60; background:var(--ink); color:var(--canvas); font-size:13px; padding:10px 16px;
+  border-radius:var(--r-s); opacity:0; pointer-events:none; transition:opacity .2s var(--ease), transform .2s var(--ease)}
+.toast.show{opacity:1; transform:translate(-50%,0)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+@media (max-width:340px){
+  .grid2{grid-template-columns:1fr}
+  .nums{gap:6px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ══════ 起课 ══════ -->
+  <main class="view active" data-view="home">
+    <header class="hero">
+      <p class="eyebrow">六神掌诀</p>
+      <h1>小六壬</h1>
+      <p class="lede">静心，默念所问之事</p>
+    </header>
+
+    <div class="nowcard" id="nowcard"></div>
+
+    <div class="seg" role="tablist" aria-label="起课方式">
+      <button role="tab" data-method="time" aria-selected="true">时辰</button>
+      <button role="tab" data-method="num" aria-selected="false">报数</button>
+      <button role="tab" data-method="rand" aria-selected="false">随心</button>
+    </div>
+
+    <section class="panel" data-panel="time">
+      <p class="hint">以此刻的<strong>农历月、日、时辰</strong>起课，最正统的用法。</p>
+      <div class="facts" id="timeFacts"></div>
+      <button class="linkish" id="toggleManual">改用别的时间 →</button>
+      <div class="manual" id="manual">
+        <div class="field"><label for="mLunarM">农历月</label><select id="mLunarM"></select></div>
+        <div class="field"><label for="mLunarD">农历日</label><select id="mLunarD"></select></div>
+        <div class="field"><label for="mShi">时辰</label><select id="mShi"></select></div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="num" hidden>
+      <p class="hint">心中默念所问之事，随手报<strong>三个数</strong>（一至九十九）。</p>
+      <div class="nums">
+        <div class="field"><label for="n1">第一数</label><input id="n1" type="number" inputmode="numeric" min="1" max="99" placeholder="—"></div>
+        <div class="field"><label for="n2">第二数</label><input id="n2" type="number" inputmode="numeric" min="1" max="99" placeholder="—"></div>
+        <div class="field"><label for="n3">第三数</label><input id="n3" type="number" inputmode="numeric" min="1" max="99" placeholder="—"></div>
+      </div>
+      <button class="linkish" id="fillRandom">想不出数？随手给三个 →</button>
+    </section>
+
+    <section class="panel" data-panel="rand" hidden>
+      <p class="hint">心诚则灵。默念所问之事三遍，再按下起课。</p>
+    </section>
+
+    <div class="block" style="margin-top:20px">
+      <p class="eyebrow" style="margin-bottom:10px">所问何事（可不选）</p>
+      <div class="attrs" id="qChips" style="justify-content:flex-start; margin-top:0"></div>
+    </div>
+
+    <div class="castwrap">
+      <button class="btn" id="castBtn">起 课</button>
+    </div>
+
+    <section class="palm">
+      <div class="palm-head">
+        <h2>六神掌诀</h2>
+        <button class="linkish" data-nav="detail" style="padding:0">读详解 →</button>
+      </div>
+      <div class="palm-grid" id="palmGrid"></div>
+      <div class="palm-foot"><span>食指</span><span>中指</span><span>无名指</span></div>
+    </section>
+
+    <section class="records" id="records">
+      <h2>近来课象</h2>
+      <div id="recList"></div>
+    </section>
+
+    <p class="foot">小六壬依传统掌诀整理，供文化参照与自省。<br>不作医疗、法律、投资之依据。</p>
+  </main>
+
+  <!-- ══════ 结果 ══════ -->
+  <main class="view" data-view="result" id="resultView"></main>
+
+  <!-- ══════ 六宫详解 ══════ -->
+  <main class="view" data-view="detail">
+    <header class="hero" style="padding:34px 0 8px">
+      <p class="eyebrow">六神详解</p>
+      <h1 style="font-size:32px">六宫断辞</h1>
+    </header>
+    <nav class="detail-nav" id="detailNav"></nav>
+    <div id="detailList"></div>
+    <div class="btnrow" style="margin-top:24px">
+      <button class="btn ghost" data-nav="home">← 回到起课</button>
+    </div>
+    <p class="foot">课象是提示，不是判决。同一宫问不同事，吉凶各异；<br>如「空亡」问病主虚惊、问官非主消散，不可一概而论。</p>
+  </main>
+
+</div>
+
+<div class="casting" id="casting" hidden>
+  <div class="inner">
+    <div class="ring" id="castRing"></div>
+    <p class="tip">掐 指 推 演</p>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+/* ═══════════════ 农历数据（1950–2050，由 gen_lunar.mjs 生成） ═══════════════ */
+const LUNAR_RAW = "__LUNAR_TABLE__";
+const LUNAR = LUNAR_RAW.split(";").map(s=>{
+  const [d,l,b] = s.split("|");
+  return { days:+d, leap:+l, bits:b };
+});
+const DAY_MS = 86400000;
+const LUNAR_EPOCH = Date.UTC(1950,0,1,4); // 1950-01-01 12:00 北京时
+
+const GAN = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const ZHI = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const SHENG = ["鼠","牛","虎","兔","龙","蛇","马","羊","猴","鸡","狗","猪"];
+const SHICHEN = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+const SHI_RANGE = ["23–01","01–03","03–05","05–07","07–09","09–11","11–13","13–15","15–17","17–19","19–21","21–23"];
+const MONTH_CN = ["正","二","三","四","五","六","七","八","九","十","冬","腊"];
+const DAY_CN = ["初一","初二","初三","初四","初五","初六","初七","初八","初九","初十",
+  "十一","十二","十三","十四","十五","十六","十七","十八","十九","二十",
+  "廿一","廿二","廿三","廿四","廿五","廿六","廿七","廿八","廿九","三十"];
+
+function toLunar(date){
+  const days = Math.floor((Date.UTC(date.getFullYear(), date.getMonth(), date.getDate(), 4) - LUNAR_EPOCH) / DAY_MS);
+  let yi = -1;
+  for (let i=0;i<LUNAR.length;i++){ if (LUNAR[i].days <= days) yi = i; else break; }
+  if (yi < 0) return null;
+  const y = LUNAR[yi];
+  let off = days - y.days;
+  for (let i=0;i<y.bits.length;i++){
+    const len = y.bits[i] === "1" ? 30 : 29;
+    if (off < len){
+      let month, isLeap = false;
+      if (y.leap && i === y.leap){ month = y.leap; isLeap = true; }
+      else if (y.leap && i > y.leap){ month = i; }
+      else { month = i + 1; }
+      return { year: 1950 + yi, month, day: off + 1, isLeap };
+    }
+    off -= len;
+  }
+  return null;
+}
+function shichenOf(hour){ return hour >= 23 ? 0 : Math.floor((hour + 1) / 2); } // 0=子 … 11=亥
+function lunarText(l){ return (l.isLeap ? "闰" : "") + MONTH_CN[l.month-1] + "月" + DAY_CN[l.day-1]; }
+
+/* ═══════════════ 六宫数据 ═══════════════ */
+const PALACES = [
+  {
+    key:"daan", name:"大安", shen:"青龙", el:"木", dir:"东方", color:"青色", nums:[1,5,7],
+    luck:"good", luckLabel:"吉", luckWord:"稳中有成",
+    poem:["大安事事昌，求谋在东方","失物去不远，宅舍保安康","行人身未动，病者主无妨","将军回田野，仔细更推详"],
+    sum:"大安居六壬之首，青龙吉神，属木主生发。此课主安稳、守成、静中得吉——事能办成，只是节奏偏慢，急不得。问事者心绪尚定，所问之事的根基是稳的，不必自乱阵脚。",
+    items:{
+      work:"按部就班即可成，不必冒进；现有位置稳固，跳槽宜缓一缓",
+      money:"正财可期，偏财不宜；财在东方或老家方向",
+      love:"相处平和，久处生情；已婚者安稳，未婚者宜慢火养",
+      health:"无大碍，多为慢性小恙，静养即安",
+      travel:"行期未动，多会推迟；出行平安",
+      lost:"人未远行，物在家中或近处，仔细找找便能见",
+      law:"无大是非，不争即过",
+      exam:"成绩平稳，有把握的部分能守住"
+    },
+    advice:["守旧、蓄力，不要急着换轨道","把手上这件事的基础打牢，比开新局更值","宜向东、宜见长辈，凡事让人一步"],
+    due:"三、五日内可见分晓"
+  },
+  {
+    key:"liulian", name:"留连", shen:"玄武", el:"水", dir:"北方", color:"黑色", nums:[2,8,10],
+    luck:"bad", luckLabel:"滞", luckWord:"事多迟回",
+    poem:["留连事难成，求谋日未明","官事凡宜缓，去者未回程","失物南方见，急讨方心称","更须防口舌，人口且平平"],
+    sum:"留连为玄武之课，属水主陷、主藏。此课主拖沓、反复、纠缠——事情久拖不决，心里没底。此时最忌催逼，越急越乱。它未必是坏结局，只是「时候未到」，宜熬、宜等。",
+    items:{
+      work:"进展缓慢，方案反复；宜观望，勿做重大决定",
+      money:"财来迟，或有拖欠；不宜借贷担保",
+      love:"纠缠不清，旧情难了；或有误会与第三者之扰",
+      health:"病情反复，宜复查；注意脾胃与睡眠",
+      travel:"行期一改再改，人多未归",
+      lost:"一时难寻，急寻方得；留意南方",
+      law:"易生纠缠官司，宜和解不宜硬碰",
+      exam:"过程反复，结果悬而未决"
+    },
+    advice:["熬。别在这时候赌一把","把该收的尾收干净，先别开新局","该问的话早点问清楚，别让误会发酵"],
+    due:"一月以上，或需反复数次"
+  },
+  {
+    key:"suxi", name:"速喜", shen:"朱雀", el:"火", dir:"南方", color:"赤色", nums:[3,6,9],
+    luck:"good", luckLabel:"吉", luckWord:"事在急成",
+    poem:["速喜喜来临，求财向南行","失物申未午，逢人路上寻","官事有福德，病者无祸侵","田宅六畜吉，行人有信音"],
+    sum:"速喜为朱雀之课，属火主明、主速。此课主快、主喜、主消息——事情来得急，去得也快，宜趁热打铁。迟疑一日，机会便走远一分。",
+    items:{
+      work:"机会突至，速办则成；适合主动出击、临门一脚",
+      money:"财来得快，南方有利；但勿贪多",
+      love:"有喜讯，或一见倾心；宜主动开口",
+      health:"急症来得快去得也快，及时就医无碍",
+      travel:"行人有信，很快有消息；出行顺利",
+      lost:"很快能找到，多在路口、道上",
+      law:"有贵人化解，宜速了结",
+      exam:"文书通知很快到，结果偏好"
+    },
+    advice:["快。今日事今日毕，别拖到明天","主动一点，这一步你先迈","往南边走、往热处走"],
+    due:"三日之内，最快当日"
+  },
+  {
+    key:"chikou", name:"赤口", shen:"白虎", el:"金", dir:"西方", color:"白色", nums:[4,7,10],
+    luck:"bad", luckLabel:"凶", luckWord:"口舌当防",
+    poem:["赤口主口舌，官非切要防","失物急去寻，行人有惊慌","六畜多作怪，病者出西方","更须防诅咒，恐怕染瘟殃"],
+    sum:"赤口为白虎之课，属金主杀、主争。此课主口舌、争执、破财、惊扰——一句话不对就翻脸，一笔钱出去就难回。凡事宜忍，切忌争强。它不是必败，只是提醒你「少说一句、少签一字」。",
+    items:{
+      work:"易与同事客户起争执，合约条款要看三遍",
+      money:"破财之象，勿轻信、勿投机、勿担保",
+      love:"口角不断，容易因一句话翻脸；冷处理为上",
+      health:"注意外伤、炎症与意外；夜间少出行",
+      travel:"途中多惊扰，证件财物看紧",
+      lost:"物或被人取走，急找或可寻回；人是有意回避",
+      law:"最忌争讼，能让则让，可请中间人调解",
+      exam:"文书易有疏漏，细节需复核"
+    },
+    advice:["忍。这一口气咽下去，事情就小一半","钱和话，都少给一点","涉及签字、转账，先放一晚再决定"],
+    due:"七日之内多有事端"
+  },
+  {
+    key:"xiaoji", name:"小吉", shen:"六合", el:"木", dir:"东南", color:"青色", nums:[1,5,7],
+    luck:"good", luckLabel:"上吉", luckWord:"和合顺遂",
+    poem:["小吉最吉昌，路上好商量","阴人来报喜，失物在坤方","行人立便至，交易甚是强","凡事皆和合，病者祷上苍"],
+    sum:"小吉为六合之课，属木主和、主合。六壬之中最为和顺之课——凡事有人帮、有路走。它的吉不在「大」，而在「顺」：关系走通了，事情自然就成了。",
+    items:{
+      work:"合作顺畅，谈判易成；贵人从中牵线",
+      money:"交易得利，合伙有利；财在东南",
+      love:"和合之象，易成良缘；已婚者和睦",
+      health:"多为虚惊，调养或祈福即可",
+      travel:"行人立至，或很快有回音；出行得助",
+      lost:"物在西南（坤方）可得；寻人易见",
+      law:"有人调停，和为上策",
+      exam:"文书顺利，有人推荐"
+    },
+    advice:["多沟通、多借力，别一个人硬扛","把关系走顺，事就成了一半","该谢的人记得谢"],
+    due:"三日之内见喜"
+  },
+  {
+    key:"kongwang", name:"空亡", shen:"勾陈", el:"土", dir:"中央", color:"黄色", nums:[3,6,9],
+    luck:"bad", luckLabel:"空", luckWord:"事多落空",
+    poem:["空亡事不祥，阴人多乖张","求财无利益，行人有灾殃","失物寻不见，官事有刑伤","病人逢暗鬼，禳解保安康"],
+    sum:"空亡为勾陈之课，属土主虚、主陷。此课主落空、虚耗、不实——所问之事多成泡影，或有隐情未明。宜静守，不宜妄动。但空亡亦有两面：问病主虚惊一场，问官非主消散，问旧事则是「该结束了」。",
+    items:{
+      work:"计划易落空，投入难回；先别加码",
+      money:"空手而归之象，勿投资、勿借贷",
+      love:"有名无实，或一方心不在；勿轻信承诺",
+      health:"久病需查根源；注意情绪低落",
+      travel:"行期易生变故，或人未至而信先断",
+      lost:"多寻不见，可能已经失去",
+      law:"易受牵连，宜避不宜迎",
+      exam:"文书有变或有遗漏，结果恐不如预期"
+    },
+    advice:["停。这一步先不迈","查。把没弄明白的地方问清楚","放。有些事结束了，反而是好事"],
+    due:"无期，或十数日后见分晓"
+  }
+];
+
+const QS = [
+  {k:"work", label:"谋事"}, {k:"money", label:"求财"}, {k:"love", label:"感情"},
+  {k:"health", label:"健康"}, {k:"exam", label:"考试"}, {k:"travel", label:"出行"}
+];
+const ITEM_LABEL = { work:"谋事", money:"求财", love:"感情", health:"健康",
+  travel:"出行", lost:"寻人失物", law:"官非口舌", exam:"文书考试" };
+
+/* ═══════════════ 状态 ═══════════════ */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const state = { method:"time", q:null, lunar:null, shi:null, manual:null, result:null };
+const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ═══════════════ 起课核心 ═══════════════ */
+function castByTime(month, day, shi){ // shi: 0=子 … 11=亥
+  const s1 = ((month - 1) % 6 + 6) % 6;
+  const s2 = ((s1 + day - 1) % 6 + 6) % 6;
+  const s3 = ((s2 + shi) % 6 + 6) % 6;
+  return {
+    final:s3,
+    steps:[
+      { label:"月", from:0, count:month, to:s1, text:`自「大安」起正月，顺数至${MONTH_CN[month-1]}月，得` },
+      { label:"日", from:s1, count:day, to:s2, text:`自「${PALACES[s1].name}」起初一，顺数至${DAY_CN[day-1]}，得` },
+      { label:"时", from:s2, count:shi+1, to:s3, text:`自「${PALACES[s2].name}」起子时，顺数至${SHICHEN[shi]}时，得` }
+    ]
+  };
+}
+function castByNumbers(a, b, c){
+  const s1 = ((a - 1) % 6 + 6) % 6;
+  const s2 = ((s1 + b - 1) % 6 + 6) % 6;
+  const s3 = ((s2 + c - 1) % 6 + 6) % 6;
+  return {
+    final:s3,
+    steps:[
+      { label:"一", from:0, count:a, to:s1, text:`自「大安」起一，数至${a}，得` },
+      { label:"二", from:s1, count:b, to:s2, text:`自「${PALACES[s1].name}」起一，数至${b}，得` },
+      { label:"三", from:s2, count:c, to:s3, text:`自「${PALACES[s2].name}」起一，数至${c}，得` }
+    ]
+  };
+}
+
+/* ═══════════════ 今日信息 ═══════════════ */
+function refreshNow(){
+  const now = new Date();
+  // 子时（23:00–24:00）依例作次日之始
+  const lateZi = now.getHours() >= 23;
+  const base = new Date(now);
+  if (lateZi) base.setDate(base.getDate() + 1);
+  const L = toLunar(base);
+  const shi = shichenOf(now.getHours());
+  state.lunar = L; state.shi = shi; state.manual = null;
+
+  const wk = "日一二三四五六"[now.getDay()];
+  const cal = `${now.getFullYear()}年${now.getMonth()+1}月${now.getDate()}日 周${wk}`;
+  const lun = L ? lunarText(L) : "农历未知";
+  const mod = (n, m) => ((n % m) + m) % m;
+  const gz = L ? `${GAN[mod(L.year-4,10)]}${ZHI[mod(L.year-4,12)]}` : "";
+  const sx = L ? SHENG[mod(L.year-4,12)] : "";
+  const ziNote = lateZi
+    ? `<span style="font-size:11.5px;color:var(--muted);letter-spacing:0"> · 子时作次日</span>`
+    : "";
+
+  const nc = $("#nowcard");
+  if (nc) nc.innerHTML =
+    `<div><div class="cal">${cal}</div><div class="lun">${lun} · ${SHICHEN[shi]}时${ziNote}</div></div>
+     <div class="gz"><b>${gz}年</b>属${sx}</div>`;
+
+  const tf = $("#timeFacts");
+  if (tf) tf.innerHTML =
+    `<div class="fact"><span class="k">月</span><span class="v">${L?MONTH_CN[L.month-1]+"月":"—"}</span></div>
+     <div class="fact"><span class="k">日</span><span class="v">${L?DAY_CN[L.day-1]:"—"}</span></div>
+     <div class="fact"><span class="k">时</span><span class="v">${SHICHEN[shi]}<em>${SHI_RANGE[shi]}</em></span></div>`;
+}
+
+/* ═══════════════ 掌诀 ═══════════════ */
+function renderPalm(){
+  // 指节排布：上排 留连 速喜 赤口 / 下排 大安 空亡 小吉
+  const order = [1,2,3,0,5,4];
+  const g = $("#palmGrid");
+  g.innerHTML = order.map(i=>{
+    const p = PALACES[i];
+    return `<button class="palm-cell" data-luck="${p.luck}" data-p="${p.key}">
+      <span class="tick"></span>
+      <span class="nm">${p.name}</span>
+      <span class="el">${p.el}·${p.dir}</span>
+    </button>`;
+  }).join("");
+  g.addEventListener("click", e=>{
+    const b = e.target.closest(".palm-cell"); if (!b) return;
+    openDetail(b.dataset.p);
+  });
+
+  const qc = $("#qChips");
+  qc.innerHTML = QS.map(q=>
+    `<button class="attr" data-q="${q.k}" role="button" aria-pressed="false">${q.label}</button>`
+  ).join("");
+  qc.addEventListener("click", e=>{
+    const b = e.target.closest("[data-q]"); if (!b) return;
+    const pick = b.dataset.q;
+    state.q = (state.q === pick) ? null : pick; // 再点一次取消
+    $$("#qChips .attr").forEach(x=>{
+      const on = x.dataset.q === state.q;
+      x.setAttribute("aria-pressed", on ? "true" : "false");
+      x.style.borderColor = on ? "var(--accent)" : "var(--hairline)";
+      x.style.color = on ? "var(--accent)" : "var(--muted)";
+    });
+  });
+}
+
+/* ═══════════════ 起课流程 ═══════════════ */
+let busy = false;
+async function doCast(){
+  if (busy) return;
+
+  let cast, meta;
+  if (state.method === "time"){
+    let L = state.lunar, shi = state.shi;
+    if (state.manual) { L = state.manual.lunar; shi = state.manual.shi; }
+    if (!L) { toast("农历数据缺失，请手动指定时间"); return; }
+    cast = castByTime(L.month, L.day, shi);
+    meta = { kind:"时辰起课", detail:`农历${lunarText(L)} · ${SHICHEN[shi]}时` };
+  } else if (state.method === "num"){
+    const vals = ["#n1","#n2","#n3"].map(s=>{
+      const v = Math.trunc(Math.abs(Number($(s).value)));
+      return Number.isFinite(v) && v > 0 ? v : null;
+    });
+    if (vals.some(v=>v===null)){
+      // 未填满则随机补齐
+      vals.forEach((v,i)=>{ if (v===null) vals[i] = 1 + Math.floor(Math.random()*99); });
+      ["#n1","#n2","#n3"].forEach((s,i)=>{ if (!$(s).value) $(s).value = vals[i]; });
+      toast("已替你补上缺的数");
+    }
+    cast = castByNumbers(vals[0], vals[1], vals[2]);
+    meta = { kind:"报数起课", detail:`报数 ${vals.join(" · ")}` };
+  } else {
+    const a = 1 + Math.floor(Math.random()*99),
+          b = 1 + Math.floor(Math.random()*99),
+          c = 1 + Math.floor(Math.random()*99);
+    cast = castByNumbers(a, b, c);
+    meta = { kind:"随心起课", detail:`随手 ${a} · ${b} · ${c}` };
+  }
+
+  busy = true;
+  $("#castBtn").disabled = true;
+  if (!reduced) await animateCast();
+  busy = false;
+  $("#castBtn").disabled = false;
+
+  const rec = { t: Date.now(), key: PALACES[cast.final].key, ...meta, cast, q: state.q };
+  state.result = rec;
+  saveRecord(rec);
+  renderResult(rec);
+  go("result");
+}
+
+function animateCast(){
+  return new Promise(res=>{
+    const box = $("#casting"), ring = $("#castRing");
+    ring.innerHTML = [1,2,3,0,5,4].map(i=>`<span>${PALACES[i].name}</span>`).join("");
+    const cells = Array.from(ring.children);
+    box.hidden = false;
+    let n = 0;
+    const total = 14 + Math.floor(Math.random()*6);
+    const tick = () => {
+      cells.forEach(c=>c.classList.remove("on"));
+      cells[n % 6].classList.add("on");
+      n++;
+      if (n < total) setTimeout(tick, 62 + Math.random()*40);
+      else setTimeout(()=>{ box.hidden = true; res(); }, 180);
+    };
+    tick();
+  });
+}
+
+/* ═══════════════ 结果渲染 ═══════════════ */
+function renderResult(rec){
+  const p = PALACES.find(x=>x.key === rec.key) || PALACES[rec.cast.final];
+  const q = rec.q;
+  const qName = q ? (QS.find(x=>x.k===q)||{}).label : null;
+
+  const items = Object.keys(ITEM_LABEL)
+    .sort((a,b)=> (a===q?-1:0) - (b===q?-1:0))
+    .map(k=>`<div class="item${k===q?" ask":""}"><dt>${ITEM_LABEL[k]}</dt><dd>${p.items[k]}</dd></div>`)
+    .join("");
+
+  const steps = rec.cast.steps.map(s=>
+    `<div class="step">${s.text} <b>${PALACES[s.to].name}</b>
+      <span class="num">（自「${PALACES[s.from].name}」顺数 ${s.count} 位）</span></div>`
+  ).join("");
+
+  $("#resultView").innerHTML = `
+    <div class="res-top">
+      <div class="plaque"><div><span class="nm">${p.name}</span></div></div>
+      <p class="luck luck-${p.luck}"><b>${p.luckLabel}</b>${p.luckWord}</p>
+      <div class="attrs">
+        <span class="attr"><b>${p.shen}</b></span>
+        <span class="attr">属<b>${p.el}</b></span>
+        <span class="attr">${p.dir}</span>
+        <span class="attr">${p.color}</span>
+        <span class="attr">数 <b>${p.nums.join(" ")}</b></span>
+      </div>
+      <p class="caption" style="margin-top:14px">${rec.kind} · ${rec.detail}</p>
+    </div>
+
+    <blockquote class="poem">${p.poem.map(l=>`<p>${l}</p>`).join("")}</blockquote>
+
+    <section class="block">
+      <h2>总断</h2>
+      ${qName ? `<div class="qbadge">所问 · ${qName}</div>` : ""}
+      <p class="body">${p.sum}</p>
+    </section>
+
+    <section class="block">
+      <h2>分项</h2>
+      <div class="grid2">${items}</div>
+    </section>
+
+    <section class="block">
+      <h2>宜与忌</h2>
+      <ol class="advice">${p.advice.map(a=>`<li>${a}</li>`).join("")}</ol>
+    </section>
+
+    <section class="block">
+      <h2>应期</h2>
+      <div class="dueline"><span class="k">何时</span><span class="v">${p.due}</span></div>
+    </section>
+
+    <details class="deriv">
+      <summary>看推演</summary>
+      <div class="steps">${steps}</div>
+      <p class="caption" style="margin-top:10px">六宫循环：大安 → 留连 → 速喜 → 赤口 → 小吉 → 空亡，数满六位即从头再起。</p>
+    </details>
+
+    <div class="btnrow" style="margin-top:32px">
+      <button class="btn" id="againBtn">再 起 一 课</button>
+    </div>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn ghost" id="copyBtn">复制断语</button>
+      <button class="btn ghost" data-nav="detail">六宫详解</button>
+    </div>
+    <div class="btnrow" style="margin-top:10px">
+      <button class="btn ghost" data-nav="home" style="border:0">← 回到起课</button>
+    </div>
+  `;
+
+  $("#againBtn").addEventListener("click", ()=>{ go("home"); refreshNow(); });
+  $("#copyBtn").addEventListener("click", ()=> copyResult(p, rec, qName));
+  $$("#resultView [data-nav]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.nav)));
+}
+
+function shareText(p, rec, qName){
+  return [
+    `【小六壬 · ${p.name}】${p.luckLabel} · ${p.luckWord}`,
+    `${rec.kind}｜${rec.detail}${qName ? "｜问" + qName : ""}`,
+    "",
+    p.poem.join("\n"),
+    "",
+    p.sum,
+    "",
+    `宜：${p.advice[0]}`,
+    `应期：${p.due}`,
+    "",
+    "—— 小六壬 · 掐指一算"
+  ].join("\n");
+}
+async function copyResult(p, rec, qName){
+  const txt = shareText(p, rec, qName);
+  try{
+    await navigator.clipboard.writeText(txt);
+    toast("断语已复制");
+  }catch(e){
+    const ta = document.createElement("textarea");
+    ta.value = txt; ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); toast("断语已复制"); }
+    catch(_) { toast("复制失败，请长按选择"); }
+    ta.remove();
+  }
+}
+
+/* ═══════════════ 六宫详解 ═══════════════ */
+let detailBuilt = false;
+function buildDetail(){
+  if (detailBuilt) return;
+  detailBuilt = true;
+  $("#detailNav").innerHTML = PALACES.map(p=>
+    `<button data-jump="${p.key}">${p.name}</button>`).join("");
+  $("#detailNav").addEventListener("click", e=>{
+    const b = e.target.closest("[data-jump]"); if (!b) return;
+    const el = document.getElementById("d-" + b.dataset.jump);
+    if (el) el.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block:"start" });
+  });
+  $("#detailList").innerHTML = PALACES.map(p=>`
+    <article class="dcard" id="d-${p.key}" data-key="${p.key}">
+      <div class="head">
+        <span class="nm">${p.name}</span>
+        <span class="tag">${p.shen} · ${p.el} · ${p.dir} · ${p.color} · 数 ${p.nums.join(" ")}</span>
+        <span class="lk ${p.luck === "bad" ? "bad" : ""}">${p.luckLabel}</span>
+      </div>
+      <div class="poem2">${p.poem.join("<br>")}</div>
+      <p class="sum">${p.sum}</p>
+      <div class="grid2">${Object.keys(ITEM_LABEL).map(k=>
+        `<div class="item"><dt>${ITEM_LABEL[k]}</dt><dd>${p.items[k]}</dd></div>`).join("")}</div>
+      <ol class="advice">${p.advice.map(a=>`<li>${a}</li>`).join("")}</ol>
+      <div class="dueline" style="margin-top:10px"><span class="k">应期</span><span class="v">${p.due}</span></div>
+    </article>`).join("");
+}
+function openDetail(key){
+  buildDetail();
+  go("detail");
+  $$("#detailList .dcard").forEach(c=> c.classList.toggle("hl", c.dataset.key === key));
+  $$("#detailNav button").forEach(b=> b.setAttribute("aria-current", b.dataset.jump === key ? "true" : "false"));
+  requestAnimationFrame(()=>{
+    const el = document.getElementById("d-" + key);
+    if (el) el.scrollIntoView({ behavior:"auto", block:"start" });
+  });
+}
+
+/* ═══════════════ 记录 ═══════════════ */
+const REC_KEY = "liuren.records.v1";
+function loadRecords(){
+  try { return JSON.parse(localStorage.getItem(REC_KEY) || "[]"); } catch(e){ return []; }
+}
+function saveRecord(rec){
+  try{
+    const all = loadRecords().filter(r=> r.t !== rec.t);
+    all.unshift({ t:rec.t, key:rec.key, kind:rec.kind, detail:rec.detail, q:rec.q, cast:rec.cast });
+    localStorage.setItem(REC_KEY, JSON.stringify(all.slice(0, 20)));
+  }catch(e){}
+  renderRecords();
+}
+function renderRecords(){
+  const all = loadRecords().slice(0, 5);
+  const box = $("#recList");
+  if (!box) return;
+  if (!all.length){
+    box.innerHTML = `<p class="empty">还没有课象。第一次占卜会记在这里。</p>`;
+    return;
+  }
+  box.innerHTML = all.map((r,i)=>{
+    const p = PALACES.find(x=>x.key === r.key) || PALACES[0];
+    const d = new Date(r.t);
+    const time = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+    return `<button class="rec" data-i="${i}">
+      <span class="nm" style="color:${p.luck==="good"?"var(--accent)":"var(--ink)"}">${p.name}</span>
+      <span class="meta">${time} · ${r.kind}</span>
+      <span class="caption">${p.luckLabel}</span>
+    </button>`;
+  }).join("");
+  box.querySelectorAll(".rec").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      const r = all[+b.dataset.i];
+      state.result = r;
+      renderResult(r);
+      go("result");
+    });
+  });
+}
+
+/* ═══════════════ 视图 / 提示 ═══════════════ */
+function go(view){
+  $$(".view").forEach(v=> v.classList.toggle("active", v.dataset.view === view));
+  window.scrollTo(0, 0);
+  if (view === "detail") buildDetail();
+}
+function toast(msg){
+  const t = $("#toast");
+  t.textContent = msg; t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(()=> t.classList.remove("show"), 1900);
+}
+
+/* ═══════════════ 初始化 ═══════════════ */
+function fillSelects(){
+  const mm = $("#mLunarM"), dd = $("#mLunarD"), ss = $("#mShi");
+  mm.innerHTML = MONTH_CN.map((m,i)=>`<option value="${i+1}">${m}月</option>`).join("");
+  dd.innerHTML = DAY_CN.map((d,i)=>`<option value="${i+1}">${d}</option>`).join("");
+  ss.innerHTML = SHICHEN.map((s,i)=>`<option value="${i}">${s}时 ${SHI_RANGE[i]}</option>`).join("");
+
+  const sync = ()=>{
+    const m = +mm.value, d = +dd.value, s = +ss.value;
+    state.manual = { lunar:{ month:m, day:d, isLeap:false, year:state.lunar ? state.lunar.year : 2026 }, shi:s };
+    $("#timeFacts").innerHTML =
+      `<div class="fact"><span class="k">月</span><span class="v">${MONTH_CN[m-1]}月</span></div>
+       <div class="fact"><span class="k">日</span><span class="v">${DAY_CN[d-1]}</span></div>
+       <div class="fact"><span class="k">时</span><span class="v">${SHICHEN[s]}<em>${SHI_RANGE[s]}</em></span></div>`;
+  };
+  [mm,dd,ss].forEach(el=> el.addEventListener("change", sync));
+
+  if (state.lunar){
+    mm.value = state.lunar.month; dd.value = state.lunar.day; ss.value = state.shi;
+  }
+}
+
+function init(){
+  refreshNow();
+  renderPalm();
+  fillSelects();
+  renderRecords();
+
+  $$(".seg button").forEach(b=>{
+    b.addEventListener("click", ()=>{
+      state.method = b.dataset.method;
+      $$(".seg button").forEach(x=> x.setAttribute("aria-selected", x === b ? "true" : "false"));
+      $$(".panel").forEach(p=> p.hidden = p.dataset.panel !== state.method);
+    });
+  });
+
+  $("#toggleManual").addEventListener("click", ()=>{
+    const m = $("#manual");
+    m.classList.toggle("open");
+    $("#toggleManual").textContent = m.classList.contains("open") ? "恢复此刻 →" : "改用别的时间 →";
+    if (!m.classList.contains("open")){
+      state.manual = null;
+      refreshNow();
+      const L = state.lunar;
+      if (L){ $("#mLunarM").value = L.month; $("#mLunarD").value = L.day; $("#mShi").value = state.shi; }
+    }
+  });
+
+  $("#fillRandom").addEventListener("click", ()=>{
+    ["#n1","#n2","#n3"].forEach(s=> $(s).value = 1 + Math.floor(Math.random()*99));
+  });
+
+  $("#castBtn").addEventListener("click", doCast);
+  $$("[data-nav]").forEach(b=> b.addEventListener("click", ()=> go(b.dataset.nav)));
+
+  // 跨过子时 / 换日自动刷新
+  setInterval(()=>{
+    if (document.visibilityState !== "visible") return;
+    const L = toLunar(new Date()), shi = shichenOf(new Date().getHours());
+    if (!L || !state.lunar || L.day !== state.lunar.day || shi !== state.shi){
+      if (!state.manual) { refreshNow(); const ml=$("#mLunarM"), md=$("#mLunarD"), ms=$("#mShi");
+        if (ml && state.lunar) { ml.value = state.lunar.month; md.value = state.lunar.day; ms.value = state.shi; } }
+    }
+  }, 60000);
+}
+
+document.addEventListener("DOMContentLoaded", init);
+if (document.readyState !== "loading") init();
+</script>
+</body>
+</html>
