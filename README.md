@@ -7,24 +7,34 @@
 
 ## 一、怎么用
 
-**电脑上（当前已启动）**
+**手机微信 / 浏览器直接打开（已上线）**
 
-- 本机：<http://127.0.0.1:8000/>
-- 手机微信：手机连同一个 Wi-Fi，微信里打开 `http://192.168.110.158:8000/`
-  （打不开就用微信扫 `qr.png`；链接里 192.168.110.158 换成你电脑当前的局域网 IP）
+### <https://cat8880.github.io/xiaoliuren/>
 
-**关掉之后重新启动**
+微信里打开后可点右上角「在浏览器打开」，也可以收藏或添加到主屏幕当 App 用。
+二维码见 `qr.png`。同一套东西之前的「塞林木解压按钮」在 <https://cat8880.github.io/jieya/>，
+部署方式完全一样。
 
-双击 `启动占卜.cmd`，窗口里会打印手机该访问的地址。关窗口即停止。
+**本机局域网（不想走公网时）**
 
-**想让别人也能打开**
+- 双击 `启动占卜.cmd`，窗口里会打印手机该访问的地址（形如 `http://192.168.x.x:8000/`）
+- 手机连同一个 Wi-Fi 即可打开；关掉窗口即停止服务
+
+**改了内容怎么更新线上**
+
+```bash
+# 1. 改 src.html（断辞数据在 PALACES 数组里）
+node build.mjs                    # 2. 重新生成 index.html
+git add -A && git commit -m "改了什么"
+git push                          # 3. GitHub Pages 约 30–60 秒后自动生效
+```
+
+Pages 构建期间可能短时间仍返回旧版本，刷两次就好。
+
+**想换个仓库/自己部署**
 
 `index.html` 是**完全自包含**的单文件（农历表、样式、脚本全在里头，无外链），
-把这三个文件随便丢到任意静态托管即可得到公网 https 链接，微信里能直接打开、转发：
-
-- GitHub Pages → 新建仓库，上传 `index.html`，Settings → Pages 开启
-- Netlify Drop（<https://app.netlify.com/drop>）→ 拖进去，立刻给链接
-- 腾讯云 / 阿里云 静态网站托管、Vercel、Cloudflare Pages 同理
+丢到任意静态托管都能用：GitHub Pages、Netlify Drop、Vercel、Cloudflare Pages、腾讯云静态托管。
 
 ---
 
